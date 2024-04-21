@@ -75,7 +75,7 @@ CUDA_VISIBLE_DEVICES=<DEVICE_ID> python main.py \
 ```
 Commands for all experiments of CMTA can be found in the [run.sh](run.sh) file.
 
-<font color="red"> Tips: some patients may have multiple WSIs, especially in TCGA-GBMLGG, resulting in OOM issue. In such case, we can randomly sample certain number of patches for these special patients to reduce the computational requirements. That will not significantly impact the overall performance.</font>
+__Tips: some patients may have multiple WSIs, especially in TCGA-GBMLGG, resulting in OOM issue.__ In such case, we can randomly sample certain number of patches for these special patients to reduce the computational requirements. That will not significantly impact the overall performance.
 ```bash
 CUDA_VISIBLE_DEVICES=<DEVICE_ID> python main.py \
                                       --which_splits 5foldcv \
@@ -92,7 +92,7 @@ CUDA_VISIBLE_DEVICES=<DEVICE_ID> python main.py \
                                       --alpha 1.0 \
                                       --OOM 4096
 ```
-<font color="red"> If the number of patches is larger than 4096, randomly sampling 4096 patches. __If there is still OOM issue, you can futher reduce the number of sampled patches.__</font>
+If the number of patches is larger than 4096, randomly sampling 4096 patches. __If there is still OOM issue, you can futher reduce the number of sampled patches.__
 
 ## Acknowledgements
 Huge thanks to the authors of following open-source projects:
