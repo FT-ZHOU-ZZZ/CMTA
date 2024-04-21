@@ -22,6 +22,8 @@ def parse_args():
     parser.add_argument("--evaluate", action="store_true", dest="evaluate", help="Evaluate model on test set")
     parser.add_argument("--resume", type=str, default="", metavar="PATH", help="Path to latest checkpoint (default: none)")
 
+    parser.add_argument("--OOM", type=int, default=0, help="Ramdomly sampling some patches to avoid OOM error")
+
     # Model Parameters.
     parser.add_argument(
         "--model",

@@ -39,6 +39,7 @@ def main(args):
         dataset = Generic_MIL_Survival_Dataset(
             csv_path="./csv/%s_all_clean.csv" % (args.dataset),
             modal=args.modal,
+            OOM=args.OOM,
             apply_sig=True,
             data_dir=args.data_root_dir,
             shuffle=False,

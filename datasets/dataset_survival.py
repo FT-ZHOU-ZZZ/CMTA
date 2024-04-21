@@ -187,11 +187,14 @@ class Generic_WSI_Survival_Dataset(Dataset):
 
 
 class Generic_MIL_Survival_Dataset(Generic_WSI_Survival_Dataset):
-    def __init__(self, data_dir, modal: str = 'omic', **kwargs):
+    def __init__(self, data_dir, modal = 'omic', OOM = 0, **kwargs):
         super(Generic_MIL_Survival_Dataset, self).__init__(**kwargs)
         self.data_dir = data_dir
         self.modal = modal
         self.use_h5 = False
+        self.OOM = OOM
+        if self.OOM > 0:
+            print('Using ramdomly sampled patches [{}] to avoid OOM error'.format(self.OOM))
 
     def __getitem__(self, idx):
         case_id = self.slide_data['case_id'][idx]
@@ -218,6 +221,9 @@ class Generic_MIL_Survival_Dataset(Generic_WSI_Survival_Dataset):
                         except FileNotFoundError:
                             continue
                     path_features = torch.cat(path_features, dim=0)
+                    if self.OOM > 0:
+                        if path_features.size(0) > self.OOM:
+                            path_features = path_features[np.random.choice(path_features.size(0), self.OOM, replace=False)]
                     return (path_features, torch.zeros((1, 1)), label, event_time, c)
 
                 elif self.modal == 'cluster':
@@ -233,6 +239,9 @@ class Generic_MIL_Survival_Dataset(Generic_WSI_Survival_Dataset):
                             print('FileNotFound: ', wsi_path)
                             continue
                     path_features = torch.cat(path_features, dim=0)
+                    if self.OOM > 0:
+                        if path_features.size(0) > self.OOM:
+                            path_features = path_features[np.random.choice(path_features.size(0), self.OOM, replace=False)]
                     cluster_ids = torch.Tensor(cluster_ids)
                     genomic_features = torch.tensor(self.genomic_features.iloc[idx])
                     return (path_features, cluster_ids, genomic_features, label, event_time, c)
@@ -252,16 +261,16 @@ class Generic_MIL_Survival_Dataset(Generic_WSI_Survival_Dataset):
                             print('FileNotFound: ', wsi_path)
                             continue
                     path_features = torch.cat(path_features, dim=0)
+                    if self.OOM > 0:
+                        if path_features.size(0) > self.OOM:
+                            path_features = path_features[np.random.choice(path_features.size(0), self.OOM, replace=False)]
                     genomic_features = torch.tensor(self.genomic_features.iloc[idx])
                     return (path_features, genomic_features, label, event_time, c)
 
                 elif self.modal == 'coattn':
                     path_features = []
 
-                    # ID = None
-
                     for slide_id in slide_ids:
-                        # ID = slide_id[:12]
                         try:
                             wsi_path = os.path.join(data_dir, 'pt_files', '{}.pt'.format(slide_id.rstrip('.svs')))
                             wsi_bag = torch.load(wsi_path)
@@ -270,19 +279,16 @@ class Generic_MIL_Survival_Dataset(Generic_WSI_Survival_Dataset):
                             print('FileNotFound: ', wsi_path)
                             continue
                     path_features = torch.cat(path_features, dim=0)
+                    if self.OOM > 0:
+                        if path_features.size(0) > self.OOM:
+                            path_features = path_features[np.random.choice(path_features.size(0), self.OOM, replace=False)]
+
                     omic1 = torch.tensor(self.genomic_features[self.omic_names[0]].iloc[idx])
                     omic2 = torch.tensor(self.genomic_features[self.omic_names[1]].iloc[idx])
                     omic3 = torch.tensor(self.genomic_features[self.omic_names[2]].iloc[idx])
                     omic4 = torch.tensor(self.genomic_features[self.omic_names[3]].iloc[idx])
                     omic5 = torch.tensor(self.genomic_features[self.omic_names[4]].iloc[idx])
                     omic6 = torch.tensor(self.genomic_features[self.omic_names[5]].iloc[idx])
-
-                    # np.save('/master/zhou_feng_tao/code/Source2/npy/ucec/{}_1.npy'.format(ID), omic1.numpy())
-                    # np.save('/master/zhou_feng_tao/code/Source2/npy/ucec/{}_2.npy'.format(ID), omic2.numpy())
-                    # np.save('/master/zhou_feng_tao/code/Source2/npy/ucec/{}_3.npy'.format(ID), omic3.numpy())
-                    # np.save('/master/zhou_feng_tao/code/Source2/npy/ucec/{}_4.npy'.format(ID), omic4.numpy())
-                    # np.save('/master/zhou_feng_tao/code/Source2/npy/ucec/{}_5.npy'.format(ID), omic5.numpy())
-                    # np.save('/master/zhou_feng_tao/code/Source2/npy/ucec/{}_6.npy'.format(ID), omic6.numpy())
 
                     return (path_features, omic1, omic2, omic3, omic4, omic5, omic6, label, event_time, c)
 
