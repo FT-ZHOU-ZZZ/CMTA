@@ -92,7 +92,7 @@ CUDA_VISIBLE_DEVICES=<DEVICE_ID> python main.py \
                                       --alpha 1.0 \
                                       --OOM 4096
 ```
-If the number of patches is larger than 4096, randomly sampling 4096 patches. __If there is still OOM issue, you can futher reduce the number of sampled patches.__
+If the number of patches is larger than 4096, randomly sampling 4096 patches. __If there is still OOM issue, you can further reduce the number of sampled patches.__
 
 ## Acknowledgements
 Huge thanks to the authors of following open-source projects:
